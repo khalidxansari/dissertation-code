@@ -1,4 +1,6 @@
 AI-Driven Metadata Tagging for Large Image Collections
+
+
 This project compares the effectiveness of Google Cloud Vision, Microsoft Azure Computer Vision, and Amazon Rekognition in generating metadata tags for diverse image categories. It aims to inform the integration of AI technologies in digital asset management practices for organizations dealing with large image collections.
 Background
 Initially intended to use datasets from the Special Collection Unit at the Institute of Ismaili Studies, London, and the British Cultural Archives, London, the study pivoted to a carefully curated public dataset due to institutional challenges. This shift highlights broader issues in the cultural heritage sector regarding data privacy, ethical considerations, and digital infrastructure.
