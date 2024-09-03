@@ -37,7 +37,6 @@ def calculate_metrics(y_true, y_pred):
     accuracy = accuracy_score(y_true, y_pred)
     return precision, recall, f1, accuracy
 
-# Usage
 precision, recall, f1, accuracy = calculate_metrics(ground_truth_tags, ai_generated_tags)
 Visualizing Performance Across Categories
 pythonCopyimport matplotlib.pyplot as plt
@@ -51,7 +50,7 @@ def plot_performance_heatmap(performance_data, categories, metrics):
     plt.tight_layout()
     plt.show()
 
-# Usage
+
 performance_data = np.array([precision_scores, recall_scores, f1_scores, accuracy_scores])
 categories = ['People', 'Art', 'Nature', 'Objects', 'Text', 'Urban/Rural']
 metrics = ['Precision', 'Recall', 'F1 Score', 'Accuracy']
@@ -98,7 +97,7 @@ def evaluate_category(category, ai_tags):
     y_pred = [1 if tag in ai_tags else 0 for tag in category_vocab]
     return calculate_metrics(y_true, y_pred)
 
-# Usage
+
 for category in categories:
     precision, recall, f1, accuracy = evaluate_category(category, ai_generated_tags)
     # Store or process results
@@ -112,7 +111,7 @@ pythonCopydef plot_category_performance(category, metrics):
     plt.tight_layout()
     plt.show()
 
-# Usage
+
 for category in categories:
     metrics = {
         'Precision': precision_scores[category],
