@@ -1,0 +1,80 @@
+from azure.cognitiveservices.vision.computervision import ComputerVisionClient
+from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
+from msrest.authentication import CognitiveServicesCredentials
+import os
+from PIL import Image, UnidentifiedImageError
+import matplotlib.pyplot as plt
+import time
+
+# Set up credentials
+subscription_key = "1f6bfd55a499433fb590050871de0fe2"
+endpoint = "https://kingsdissertationproject.cognitiveservices.azure.com/"
+
+# Authenticate the client
+computervision_client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
+
+# Function to get tags for an image and add them to a dictionary
+def tag_image(image_path, all_tags):
+    try:
+        # Open and resize the image if it's too large
+        with Image.open(image_path) as img:
+            if img.size[0] > 4000 or img.size[1] > 4000:  # Example size limit
+                img = img.resize((4000, int((4000 / img.size[0]) * img.size[1])), Image.LANCZOS)
+                img.save("resized_image.jpg")
+                image_path = "resized_image.jpg"
+
+        with open(image_path, "rb") as image_stream:
+            tags_result = computervision_client.tag_image_in_stream(image_stream)
+
+        if not tags_result.tags:
+            print(f"No tags found for image {image_path}.")
+            all_tags[os.path.basename(image_path)] = []
+        else:
+            print(f"Tags in the image {image_path}:")
+            tag_list = []
+            for tag in tags_result.tags:
+                print(f"'{tag.name}' with confidence {tag.confidence * 100:.2f}%")
+                tag_list.append(f"{tag.name} ({tag.confidence * 100:.2f}%)")
+            print()  # Add a newline for better readability between images
+            all_tags[os.path.basename(image_path)] = tag_list
+
+    except Exception as e:
+        print(f"An error occurred while processing the image {image_path}: {e}")
+
+# Directory containing images
+image_directory = "D:/Kings College/Dissertation/Revised Image Datasets/Cultural and Historical Contexts"
+
+# Dictionary to store all tags
+all_tags = {}
+
+# Process each image in the directory
+for filename in os.listdir(image_directory):
+    image_path = os.path.join(image_directory, filename)
+    
+    # Ensure the path is a file, not a directory
+    if os.path.isfile(image_path):
+        try:
+            # Open and display the image
+            image = Image.open(image_path)
+            plt.imshow(image)
+            plt.axis("off")
+            plt.show()
+
+            # Tag the image
+            tag_image(image_path, all_tags)
+            
+            # Wait for 10 seconds before processing the next image
+            time.sleep(10)
+            
+        except UnidentifiedImageError:
+            print(f"Skipping file {filename}, not a valid image.")
+        except Exception as e:
+            print(f"An error occurred while opening the image {filename}: {e}")
+
+# Write all tags to a single text file
+tags_file_path = os.path.join(image_directory, 'arts_labels_azure.txt')
+with open(tags_file_path, 'w') as tag_file:
+    for image, tags in all_tags.items():
+        tag_file.write(f'Tags for {image}:\n')
+        tag_file.write('\n'.join(tags))
+        tag_file.write('\n\n')
